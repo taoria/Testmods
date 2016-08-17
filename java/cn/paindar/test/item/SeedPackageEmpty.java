@@ -1,5 +1,6 @@
 package cn.paindar.test.item;
 
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 
 /**
@@ -11,5 +12,6 @@ public class SeedPackageEmpty extends Item
     {
         super();
         this.setUnlocalizedName("seedPackageEmpty");
+        this.setCreativeTab(CreativeTabs.tabTools);
     }
 }

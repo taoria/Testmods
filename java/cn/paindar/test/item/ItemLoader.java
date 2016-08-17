@@ -11,10 +11,12 @@ import net.minecraft.item.Item;
 public class ItemLoader
 {
     public static SeedPackageEmpty seedPackageEmpty = new SeedPackageEmpty();
+    public static SeedPackageFull seedPackageFull = new SeedPackageFull();
 
     public ItemLoader(FMLPreInitializationEvent event)
     {
         RegisterItem(seedPackageEmpty, "seed_emptyPackage");
+        RegisterItem(seedPackageFull, "seed_fullPackage");
     }
 
     private void RegisterItem(Item item, String name)
