@@ -1,0 +1,14 @@
+[
+{
+  "modid": "wtfTest",
+  "name": "TEST",
+  "description": "特に意味はない。",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "authorList": ["Paindar"],
+  "credits": "Notch, Cpw, etc.",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
