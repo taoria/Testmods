@@ -22,19 +22,10 @@ import tv.twitch.chat.ChatMessage;
 /**
  * Created by Paindar on 2016/8/17.
  */
-class FilterFmLand implements IBlockSelector
-{
-    @Override
-    public boolean accepts(World world, int i, int i1, int i2, Block block)
-    {
-        return block== Blocks.farmland?true:false;
-    }
-}
+
 
 public class SeedPackageFull extends Item
 {
-    private static float DISTANCE=15f;
-    private static FilterFmLand fliterFmLand=new FilterFmLand();
     public  SeedPackageFull()
     {
         super();
@@ -62,31 +53,26 @@ public class SeedPackageFull extends Item
     }
 
     @Override
-    public ItemStack onItemRightClick(ItemStack itemStack, World world, EntityPlayer entityPlayer)
+    public boolean onItemUse(ItemStack itemStack, EntityPlayer entityPlayer, World world, int x, int y, int z, int dir, float p_77648_8_, float p_77648_9_, float p_77648_10_)
     {
-        entityPlayer.addChatMessage(new ChatComponentText(itemStack.getDisplayName()));
-        Vec3 start=Vec3.createVectorHelper(entityPlayer.posX,entityPlayer.posY+entityPlayer.getEyeHeight(),entityPlayer.posZ),
-            looking=entityPlayer.getLookVec(),
-            end=Vec3.createVectorHelper(entityPlayer.posX+looking.xCoord*DISTANCE,entityPlayer.posY+looking.yCoord*DISTANCE,entityPlayer.posZ+looking.zCoord*DISTANCE);
-        MovingObjectPosition mop= Raytrace.rayTraceBlocks(world,start,end,fliterFmLand);
-        if(mop!=null)
+        if (dir != 1)
         {
-            for(int i=-1;i<=1;i++)
-            {
-                for(int j=-1;j<=1;j++)
-                {
-                    attemptSustain(world,mop.blockX+i,mop.blockY,mop.blockZ+j);
-                }
-
-            }
-            if(!entityPlayer.capabilities.isCreativeMode)
-            {
-                itemStack.stackSize--;
-                entityPlayer.inventory.addItemStackToInventory(new ItemStack(ItemLoader.seedPackageEmpty, 1));
-            }
-
+            return false;
         }
-        return itemStack;
+
+        for(int i=-1;i<=1;i++)
+        {
+            for(int j=-1;j<=1;j++)
+            {
+                attemptSustain(world,x+i,y,z+j);
+            }
+        }
+        if(!entityPlayer.capabilities.isCreativeMode)
+        {
+            itemStack.stackSize--;
+            entityPlayer.inventory.addItemStackToInventory(new ItemStack(ItemLoader.seedPackageEmpty, 1));
+        }
+        return true;
     }
 
 

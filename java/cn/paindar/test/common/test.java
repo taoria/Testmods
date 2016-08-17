@@ -22,10 +22,12 @@ ____######________#####_____#####_____####_____
 _____#####________####______#####_____###______
 ______#####______;###________###______#________
 ________##_______####________####______________
+          ワールドイズマイン！
 
  */
 package cn.paindar.test.common;
 
+import cn.paindar.test.crafting.CraftingLoader;
 import cn.paindar.test.item.ItemLoader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -45,13 +47,14 @@ public class test
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-        new ItemLoader(event);
+        ItemLoader.Init(event);
+
     }
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event)
     {
-
+        CraftingLoader.Init(event);
     }
 
     @Mod.EventHandler

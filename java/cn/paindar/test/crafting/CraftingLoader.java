@@ -11,7 +11,7 @@ import net.minecraft.item.ItemStack;
  */
 public class CraftingLoader
 {
-    public CraftingLoader(FMLInitializationEvent event)
+    public static void Init(FMLInitializationEvent event)
     {
         GameRegistry.addShapelessRecipe(new ItemStack(ItemLoader.seedPackageEmpty,1),new Object[]
                 {

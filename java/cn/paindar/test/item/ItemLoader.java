@@ -12,14 +12,16 @@ public class ItemLoader
 {
     public static SeedPackageEmpty seedPackageEmpty = new SeedPackageEmpty();
     public static SeedPackageFull seedPackageFull = new SeedPackageFull();
+    public static FFFWand fffWand = new FFFWand();
 
-    public ItemLoader(FMLPreInitializationEvent event)
+    public static void Init(FMLPreInitializationEvent event)
     {
         RegisterItem(seedPackageEmpty, "seed_emptyPackage");
         RegisterItem(seedPackageFull, "seed_fullPackage");
+        RegisterItem(fffWand, "fffWand");
     }
 
-    private void RegisterItem(Item item, String name)
+    private static void RegisterItem(Item item, String name)
     {
         GameRegistry.registerItem(item, name);
         item.setTextureName(GameData.getItemRegistry().getNameForObject(item).toString());
