@@ -24,16 +24,30 @@ public class WorldGeneratorFloatingIsland implements IWorldGenerator
 
     private static float getGray(int gray[][][],int x,int y,int z, int strX,int strY,int strZ,int endX,int endY,int endZ,int maxG)
     {
+
         if(gray[y][x][z]==maxG)
         {
-            if(y!=strY && y!=endY)
-                gray[y][x][z]=(int)(maxG*MathHelper.sin(1.57f*(getGray(gray,x,endY,z,strX,strY,strZ,endX,endY,endZ,maxG)*(endY-y)+getGray(gray,x,strY,z,strX,strY,strZ,endX,endY,endZ,maxG)*(y-strY))/((endY-strY)*maxG)));
-            else if(z!=strZ && z!=endZ)
-                gray[y][x][z]=(int)(maxG*MathHelper.sin(1.57f*(getGray(gray,x,y,endZ,strX,strY,strZ,endX,endY,endZ,maxG)*(endZ-z)+getGray(gray,x,y,strZ,strX,strY,strZ,endX,endY,endZ,maxG)*(z-strZ))/((endZ-strZ)*maxG)));
-            else if(x!=strX&& x!=endX)
-                gray[y][x][z]=(int)(maxG*MathHelper.sin(1.57f*(getGray(gray,endX,y,z,strX,strY,strZ,endX,endY,endZ,maxG)*(endX-x)+getGray(gray,strX,y,z,strX,strY,strZ,endX,endY,endZ,maxG)*(x-strX))/((endX-strX)*maxG)));
+            if(x<=strX || x>=endX || y<=strY || y>=endY || z<=strZ || z>=endZ)
+            {
+                if(z!=strZ && z!=endZ)
+                    gray[y][x][z]=(int)(maxG*MathHelper.sin(1.57f*(getGray(gray,x,y,endZ,strX,strY,strZ,endX,endY,endZ,maxG)*(endZ-z)+getGray(gray,x,y,strZ,strX,strY,strZ,endX,endY,endZ,maxG)*(z-strZ))/((endZ-strZ)*maxG)));
+                else if(y!=strY && y!=endY)
+                    gray[y][x][z]=(int)(maxG*MathHelper.sin(1.57f*(getGray(gray,x,endY,z,strX,strY,strZ,endX,endY,endZ,maxG)*(endY-y)+getGray(gray,x,strY,z,strX,strY,strZ,endX,endY,endZ,maxG)*(y-strY))/((endY-strY)*maxG)));
+                else if(x!=strX&& x!=endX)
+                    gray[y][x][z]=(int)(maxG*MathHelper.sin(1.57f*(getGray(gray,endX,y,z,strX,strY,strZ,endX,endY,endZ,maxG)*(endX-x)+getGray(gray,strX,y,z,strX,strY,strZ,endX,endY,endZ,maxG)*(x-strX))/((endX-strX)*maxG)));
+                else
+                    gray[y][x][z]=maxG-1;
+            }
             else
-                gray[y][x][z]=maxG-1;
+            {
+                 gray[y][x][z]=(int)(
+                     getGray(gray,x,y+1,z,strX,strY,strZ,endX,endY,endZ,maxG)
+                    +getGray(gray,x,y-1,z,strX,strY,strZ,endX,endY,endZ,maxG)
+                    +getGray(gray,x+1,y,z,strX,strY,strZ,endX,endY,endZ,maxG)
+                    +getGray(gray,x-1,y,z,strX,strY,strZ,endX,endY,endZ,maxG)
+                    +getGray(gray,x,y,z+1,strX,strY,strZ,endX,endY,endZ,maxG)
+                    +getGray(gray,x,y,z-1,strX,strY,strZ,endX,endY,endZ,maxG))/6;
+            }
         }
         return gray[y][x][z];
     }
@@ -95,53 +109,41 @@ public class WorldGeneratorFloatingIsland implements IWorldGenerator
 
             }
         }*/
-        int MAXSIZE=16;
+        int MAXSIZE=16,MaxGray=1000;
         int grayLvl[][][]=new int[MAXSIZE][MAXSIZE][MAXSIZE];
-        for(int ay=0;ay<16;ay++)
+        for(int ay=0;ay<MAXSIZE;ay++)
         {
-            for (int ax = 0; ax < 16; ax ++)
+            for (int ax = 0; ax < MAXSIZE; ax ++)
             {
-                for (int az = 0; az < 16; az ++)
+                for (int az = 0; az < MAXSIZE; az ++)
                 {
-                    grayLvl[ay][ax][az]=255;
+                    grayLvl[ay][ax][az]=MaxGray;
                 }
             }
         }
-        for(int i=2;i<16;i+=2)
+
+        for(int i=2;i<MAXSIZE;i+=2)
         {
-            for(int j=2;j<16;j+=2)
+            for(int j=2;j<MAXSIZE;j+=2)
             {
-                grayLvl[8][i][j]=(0+(i-8)*(j-8)*4);
-                grayLvl[12][i][j]=random.nextInt(256);
-                grayLvl[4][i][j]=random.nextInt(256);
+                grayLvl[8][i][j]=0+(i-8)*(i-8)*2+(j-8)*(j-8)*2;
+                grayLvl[12][i][j]=random.nextInt(MaxGray);
+                grayLvl[4][i][j]=random.nextInt(MaxGray);
             }
         }
-        for(int i=2;i<16;i+=2)
+        for(int i=2;i<MAXSIZE;i+=2)
         {
-            for(int j=2;j<16;j+=2)
+            for(int j=2;j<MAXSIZE;j+=2)
             {
-                for(int k=4;k<12;k+=2)
+                for(int k=4;k<MAXSIZE-2;k+=2)
                 {
-                    if(grayLvl[k][i][j]==255)
+                    if(grayLvl[k][i][j]==MaxGray)
                     {
                         grayLvl[k][i][j]=(int)(lerpf(grayLvl[k+2][i][j],grayLvl[k-2][i][j],0.5f));
                     }
                 }
             }
         }
-        /**              10
-         *              9
-         *            7
-         *          5
-         *        3
-         *      1
-         *     0  2  6 10 14 16
-         *     2
-         *     6
-         *     10
-         *     14
-         *     16
-          */
 
         for(int ay=0;ay<16;ay+=2)
         {
@@ -150,9 +152,9 @@ public class WorldGeneratorFloatingIsland implements IWorldGenerator
                 for(int az=0;az<16;az+=2)
                 {
                     int maxX=(ax==14)?15:ax+2,
-                            maxY=(ay==14)?15:ay+2,
+                            maxY=(ay==12)?15:ay+4,
                             maxZ=(az==14)?15:az+2;
-                    fill(grayLvl,ax,ay,az,maxX,maxY,maxZ,255);
+                    fill(grayLvl,ax,ay,az,maxX,maxY,maxZ,MaxGray);
                 }
             }
         }
@@ -161,12 +163,14 @@ public class WorldGeneratorFloatingIsland implements IWorldGenerator
             for (int ay = 0; ay < 16; ay++) {
                 for (int ax = 0; ax < 16; ax++) {
                     for (int az =0; az < 16; az++) {
-                        if (grayLvl[ay][ax][az] <= 72) {
+                        if (grayLvl[ay][ax][az] <= MaxGray/4) {
                             world.setBlock(x + ax - 8, y + ay - 8, z + az - 8, Blocks.stone);
                         }
-                        else if(grayLvl[ay][ax][az] <= 144)
-                            world.setBlock(x + ax - 8, y + ay - 8, z + az - 8, Blocks.grass);
-                        
+                        else if(grayLvl[ay][ax][az] <= MaxGray/2)
+                            world.setBlock(x + ax - 8, y + ay - 8, z + az - 8, Blocks.dirt);
+                        else
+                            world.setBlockToAir(x + ax - 8, y + ay - 8, z + az - 8);
+
 
 
                     }
@@ -176,11 +180,14 @@ public class WorldGeneratorFloatingIsland implements IWorldGenerator
         }
         else
         {
+            int offset=0;
+            while(world.getBlock(x,y-offset,z)!=Blocks.dirt)
+                offset++;
             for (int ax = -7; ax < 7; ax++) {
                 for (int az = -7; az < 7; az++) {
                     for(int ay=0;ay>=(ax*ax+az*az)/9.6-5;ay--)
                     {
-                        world.setBlock(x + ax , y + ay , z + az , Blocks.stone);
+                        world.setBlock(x + ax , y + ay , z + az , world.getBlock(x+ax,y+ay-offset,z+az));
                     }
                 }
             }
