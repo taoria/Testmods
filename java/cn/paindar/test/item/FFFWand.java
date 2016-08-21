@@ -1,16 +1,17 @@
 package cn.paindar.test.item;
 
 import com.google.common.collect.Sets;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 
 import java.util.Iterator;
 import java.util.List;
@@ -22,6 +23,8 @@ import java.util.Set;
  */
 public class FFFWand extends ItemTool
 {
+    private Set<EntityPlayer> list=Sets.newHashSet();
+
     public FFFWand()
     {
         super(6f,ToolMaterial.WOOD, Sets.newHashSet());
@@ -65,5 +68,11 @@ public class FFFWand extends ItemTool
         }
         itemStack.damageItem(iCount,player);
         return itemStack;
+    }
+
+    @SubscribeEvent
+    public void OnPlayerDamaged(LivingHurtEvent event)
+    {
+
     }
 }

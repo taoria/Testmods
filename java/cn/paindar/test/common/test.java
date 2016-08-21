@@ -29,6 +29,7 @@ package cn.paindar.test.common;
 
 import cn.paindar.test.crafting.CraftingLoader;
 import cn.paindar.test.item.ItemLoader;
+import cn.paindar.test.worldgen.WorldGeneratorLoader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -55,6 +56,7 @@ public class test
     public void init(FMLInitializationEvent event)
     {
         CraftingLoader.Init(event);
+        WorldGeneratorLoader.init();
     }
 
     @Mod.EventHandler
