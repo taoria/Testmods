@@ -24,31 +24,16 @@ public class WorldGeneratorFloatingIsland implements IWorldGenerator
 
     private static float getGray(int gray[][][],int x,int y,int z, int strX,int strY,int strZ,int endX,int endY,int endZ,int maxG)
     {
-
-        if(gray[y][x][z]==maxG)
-        {
-            if(x<=strX || x>=endX || y<=strY || y>=endY || z<=strZ || z>=endZ)
-            {
-                if(z!=strZ && z!=endZ)
-                    gray[y][x][z]=(int)(maxG*MathHelper.sin(1.57f*(getGray(gray,x,y,endZ,strX,strY,strZ,endX,endY,endZ,maxG)*(endZ-z)+getGray(gray,x,y,strZ,strX,strY,strZ,endX,endY,endZ,maxG)*(z-strZ))/((endZ-strZ)*maxG)));
-                else if(y!=strY && y!=endY)
-                    gray[y][x][z]=(int)(maxG*MathHelper.sin(1.57f*(getGray(gray,x,endY,z,strX,strY,strZ,endX,endY,endZ,maxG)*(endY-y)+getGray(gray,x,strY,z,strX,strY,strZ,endX,endY,endZ,maxG)*(y-strY))/((endY-strY)*maxG)));
-                else if(x!=strX&& x!=endX)
-                    gray[y][x][z]=(int)(maxG*MathHelper.sin(1.57f*(getGray(gray,endX,y,z,strX,strY,strZ,endX,endY,endZ,maxG)*(endX-x)+getGray(gray,strX,y,z,strX,strY,strZ,endX,endY,endZ,maxG)*(x-strX))/((endX-strX)*maxG)));
-                else
-                    gray[y][x][z]=maxG-1;
-            }
-            else
-            {
-                 gray[y][x][z]=(int)(
-                     getGray(gray,x,y+1,z,strX,strY,strZ,endX,endY,endZ,maxG)
-                    +getGray(gray,x,y-1,z,strX,strY,strZ,endX,endY,endZ,maxG)
-                    +getGray(gray,x+1,y,z,strX,strY,strZ,endX,endY,endZ,maxG)
-                    +getGray(gray,x-1,y,z,strX,strY,strZ,endX,endY,endZ,maxG)
-                    +getGray(gray,x,y,z+1,strX,strY,strZ,endX,endY,endZ,maxG)
-                    +getGray(gray,x,y,z-1,strX,strY,strZ,endX,endY,endZ,maxG))/6;
-            }
-        }
+        if(gray[y][x][z]!=maxG)
+            return gray[y][x][z];
+        if(z!=strZ && z!=endZ)
+            gray[y][x][z]=(int)(lerpf(getGray(gray,x,y,strZ,strX,strY,strZ,endX,endY,endZ,maxG),getGray(gray,x,y,endZ,strX,strY,strZ,endX,endY,endZ,maxG),(float)(endZ-z)/(endZ-strZ)));
+        else if(y!=strY && y!=endY)
+            gray[y][x][z]=(int)(lerpf(getGray(gray,x,strY,z,strX,strY,strZ,endX,endY,endZ,maxG),getGray(gray,x,endY,z,strX,strY,strZ,endX,endY,endZ,maxG),(float)(endY-y)/(endY-strY)));
+        else if(x!=strX&& x!=endX)
+            gray[y][x][z]=(int)(lerpf(getGray(gray,strX,y,z,strX,strY,strZ,endX,endY,endZ,maxG),getGray(gray,endX,y,z,strX,strY,strZ,endX,endY,endZ,maxG),(float)(endX-x)/(endX-strX)));
+        else
+            gray[y][x][z]=maxG-1;
         return gray[y][x][z];
     }
     private static void fill(int gray[][][], int strX,int strY,int strZ,int endX,int endY,int endZ,int maxG)
@@ -109,7 +94,7 @@ public class WorldGeneratorFloatingIsland implements IWorldGenerator
 
             }
         }*/
-        int MAXSIZE=16,MaxGray=1000;
+        int MAXSIZE=16,MaxGray=255;
         int grayLvl[][][]=new int[MAXSIZE][MAXSIZE][MAXSIZE];
         for(int ay=0;ay<MAXSIZE;ay++)
         {
@@ -127,8 +112,9 @@ public class WorldGeneratorFloatingIsland implements IWorldGenerator
             for(int j=2;j<MAXSIZE;j+=2)
             {
                 grayLvl[8][i][j]=0+(i-8)*(i-8)*2+(j-8)*(j-8)*2;
-                grayLvl[12][i][j]=random.nextInt(MaxGray);
-                grayLvl[4][i][j]=random.nextInt(MaxGray);
+                grayLvl[12][i][j]=random.nextInt(MaxGray-grayLvl[8][i][j])+grayLvl[8][i][j];
+                grayLvl[4][i][j]=random.nextInt(MaxGray-grayLvl[8][i][j])+grayLvl[8][i][j];
+                grayLvl[0][i][j]=random.nextInt(grayLvl[4][i][j]+1);
             }
         }
         for(int i=2;i<MAXSIZE;i+=2)
@@ -151,9 +137,9 @@ public class WorldGeneratorFloatingIsland implements IWorldGenerator
             {
                 for(int az=0;az<16;az+=2)
                 {
-                    int maxX=(ax==14)?15:ax+2,
-                            maxY=(ay==12)?15:ay+4,
-                            maxZ=(az==14)?15:az+2;
+                    int maxX=(ax+2>=16)?15:ax+2,
+                            maxY=(ay+4>=16)?15:ay+4,
+                            maxZ=(az+2>=16)?15:az+2;
                     fill(grayLvl,ax,ay,az,maxX,maxY,maxZ,MaxGray);
                 }
             }
@@ -176,7 +162,7 @@ public class WorldGeneratorFloatingIsland implements IWorldGenerator
                     }
                 }
             }
-            exc=false;
+            //exc=false;
         }
         else
         {
